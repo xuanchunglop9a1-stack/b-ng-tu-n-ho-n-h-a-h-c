@@ -1,0 +1,1245 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bảng tuần hoàn hóa học 3D</title>
+  <style>
+    :root {
+      --bg: #071019;
+      --panel: rgba(13, 26, 38, .78);
+      --panel-2: rgba(21, 36, 50, .92);
+      --text: #eef7ff;
+      --muted: #9cb7c9;
+      --line: rgba(255,255,255,.13);
+      --accent: #43e3c5;
+      --accent-2: #ffcc66;
+      --danger: #ff6b8b;
+      --shadow: 0 18px 60px rgba(0,0,0,.36);
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    [data-theme="light"] {
+      --bg: #f4f8fb;
+      --panel: rgba(255,255,255,.88);
+      --panel-2: #ffffff;
+      --text: #10202d;
+      --muted: #526b7b;
+      --line: rgba(16,32,45,.14);
+      --shadow: 0 18px 48px rgba(27,56,77,.14);
+    }
+
+    [data-theme="glass"] {
+      --bg: #0a1422;
+      --panel: rgba(255,255,255,.13);
+      --panel-2: rgba(255,255,255,.17);
+      --text: #f5fbff;
+      --muted: #b9ccdc;
+      --line: rgba(255,255,255,.22);
+      --accent: #a7f3d0;
+      --accent-2: #f9a8d4;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(67,227,197,.18), transparent 32%),
+        radial-gradient(circle at 82% 18%, rgba(255,204,102,.18), transparent 32%),
+        linear-gradient(135deg, var(--bg), #0b1320 58%, #111827);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.35) 1px, transparent 1.5px),
+        radial-gradient(circle, rgba(67,227,197,.28) 1px, transparent 1.5px);
+      background-size: 78px 78px, 127px 127px;
+      animation: drift 28s linear infinite;
+      opacity: .27;
+      z-index: -1;
+    }
+
+    @keyframes drift {
+      from { transform: translate3d(0,0,0); }
+      to { transform: translate3d(-70px, 70px, 0); }
+    }
+
+    .app-shell {
+      width: min(1500px, calc(100% - 28px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: color-mix(in srgb, var(--bg), transparent 18%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      min-height: 68px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      position: relative;
+      background: radial-gradient(circle, var(--accent-2), #ff745e 48%, transparent 51%);
+      box-shadow: 0 0 28px rgba(67,227,197,.5);
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 9px -9px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      transform: rotate(32deg);
+    }
+
+    .brand-mark::after { transform: rotate(-32deg); }
+
+    nav {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 8px 0;
+    }
+
+    nav::-webkit-scrollbar { display: none; }
+    nav a, .btn, .chip, .icon-btn, select, input {
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: var(--panel);
+      border-radius: var(--radius);
+    }
+
+    nav a {
+      text-decoration: none;
+      padding: 9px 12px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    nav a:hover, .btn:hover, .chip:hover, .icon-btn:hover {
+      border-color: color-mix(in srgb, var(--accent), white 15%);
+      box-shadow: 0 0 0 3px rgba(67,227,197,.12);
+    }
+
+    .theme-select {
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    .hero {
+      min-height: calc(100vh - 68px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 520px);
+      gap: 34px;
+      align-items: center;
+      padding: 46px 0 24px;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      font-size: clamp(42px, 7vw, 92px);
+      line-height: .94;
+      margin-bottom: 22px;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: clamp(17px, 2vw, 22px);
+      line-height: 1.55;
+      max-width: 760px;
+    }
+
+    .hero-actions, .tool-row, .filter-row, .compare-grid, .profile-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      cursor: pointer;
+      padding: 12px 16px;
+      font-weight: 800;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn.primary {
+      color: #05201b;
+      background: linear-gradient(135deg, var(--accent), #8cffb6);
+      border-color: transparent;
+    }
+
+    .search-box {
+      width: min(680px, 100%);
+      margin: 26px 0;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+
+    input, select {
+      min-height: 44px;
+      padding: 0 12px;
+      outline: none;
+      font: inherit;
+    }
+
+    .atom-stage {
+      min-height: 460px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      perspective: 900px;
+      overflow: hidden;
+    }
+
+    .atom {
+      width: min(72vw, 390px);
+      aspect-ratio: 1;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: floaty 6s ease-in-out infinite;
+    }
+
+    .nucleus {
+      position: absolute;
+      inset: 38%;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 34% 30%, #fff, var(--accent-2) 24%, #ff5b66 66%, #8b1e49);
+      box-shadow: 0 0 55px rgba(255,204,102,.75), inset -12px -14px 26px rgba(0,0,0,.25);
+    }
+
+    .orbit {
+      position: absolute;
+      inset: 10%;
+      border: 1.5px solid rgba(255,255,255,.28);
+      border-radius: 50%;
+      transform-style: preserve-3d;
+      animation: spin 5s linear infinite;
+    }
+
+    .orbit:nth-child(2) { transform: rotateX(68deg) rotateY(24deg); animation-duration: 4.2s; }
+    .orbit:nth-child(3) { transform: rotateX(-58deg) rotateY(62deg); animation-duration: 6.5s; }
+    .orbit:nth-child(4) { transform: rotateX(10deg) rotateY(84deg); animation-duration: 7.5s; }
+
+    .electron {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 24px var(--accent);
+      position: absolute;
+      left: 50%;
+      top: -8px;
+    }
+
+    @keyframes spin { to { rotate: 360deg; } }
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0) rotateX(8deg); }
+      50% { transform: translateY(-16px) rotateX(-6deg); }
+    }
+
+    section {
+      padding: 54px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    h2 {
+      font-size: clamp(28px, 4vw, 50px);
+      line-height: 1.05;
+      margin-bottom: 8px;
+    }
+
+    .muted { color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .pad { padding: 18px; }
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(180px, 1fr));
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .time-card {
+      border-left: 3px solid var(--accent);
+      min-height: 150px;
+    }
+
+    .time-card strong {
+      color: var(--accent-2);
+      font-size: 28px;
+    }
+
+    .periodic-wrap {
+      overflow: auto;
+      padding: 12px;
+    }
+
+    .periodic {
+      display: grid;
+      grid-template-columns: repeat(18, 72px);
+      grid-auto-rows: 72px;
+      gap: 6px;
+      min-width: 1398px;
+      padding-bottom: 10px;
+    }
+
+    .element {
+      position: relative;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 6px;
+      padding: 5px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform .16s ease, filter .16s ease, opacity .16s ease;
+      color: #061015;
+    }
+
+    .element:hover {
+      transform: translateY(-4px) scale(1.06);
+      z-index: 2;
+      filter: saturate(1.25) brightness(1.08);
+    }
+
+    .element.dim { opacity: .2; }
+    .num { font-size: 11px; font-weight: 800; opacity: .76; }
+    .sym { font-size: 22px; font-weight: 950; line-height: 1.05; }
+    .ename { font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mass { font-size: 8px; opacity: .8; }
+
+    .alkali { background: #ff9d8e; }
+    .alkaline { background: #ffd36a; }
+    .transition { background: #86d9ff; }
+    .post-transition { background: #9ee8b7; }
+    .metalloid { background: #bba8ff; }
+    .nonmetal { background: #a8f0df; }
+    .halogen { background: #f8a8dc; }
+    .noble { background: #b8d2ff; }
+    .lanthanide { background: #ffbd7a; }
+    .actinide { background: #f0a1a8; }
+    .unknown { background: #d6dde4; }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .swatch {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,.3);
+    }
+
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 18px;
+    }
+
+    .big-symbol {
+      height: 260px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: #061015;
+      background: linear-gradient(135deg, #a8f0df, #ffd36a);
+      border-radius: var(--radius);
+    }
+
+    .big-symbol b { font-size: 96px; display: block; }
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .fact {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      min-height: 74px;
+    }
+
+    .fact small { color: var(--muted); display: block; margin-bottom: 5px; }
+    .mini-atom {
+      height: 280px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 900;
+      color: #061015;
+    }
+
+    .p { background: #ff6b8b; }
+    .n { background: #ffd36a; transform: translate(22px, -12px); }
+    .e { background: #43e3c5; animation: electronPath 4s linear infinite; }
+    .e.two { animation-delay: -2s; }
+    @keyframes electronPath {
+      from { transform: rotate(0deg) translateX(115px) rotate(0deg); }
+      to { transform: rotate(360deg) translateX(115px) rotate(-360deg); }
+    }
+
+    .bars { display: grid; gap: 12px; }
+    .bar label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .track {
+      height: 12px;
+      background: rgba(255,255,255,.12);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .fill {
+      height: 100%;
+      width: var(--w);
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--danger));
+    }
+
+    .quiz-option {
+      width: 100%;
+      text-align: left;
+      margin-top: 8px;
+      justify-content: space-between;
+    }
+
+    .game-board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .card-tile {
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .reaction {
+      font-size: clamp(22px, 4vw, 44px);
+      text-align: center;
+      padding: 26px 12px;
+      color: var(--accent-2);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      font-size: 13px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      background: rgba(0,0,0,.58);
+      z-index: 40;
+      padding: 18px;
+    }
+
+    .modal.open { display: grid; }
+    .modal-card {
+      width: min(920px, 100%);
+      max-height: 88vh;
+      overflow: auto;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      background: var(--panel-2);
+    }
+
+    .close {
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 1000px) {
+      .hero, .detail-layout { grid-template-columns: 1fr; }
+      .atom-stage { min-height: 360px; }
+      .span-3, .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: span 12; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .nav { grid-template-columns: 1fr auto; }
+      nav { grid-column: 1 / -1; order: 3; }
+    }
+
+    @media (max-width: 620px) {
+      .app-shell { width: min(100% - 18px, 1500px); }
+      .search-box { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .periodic { grid-template-columns: repeat(18, 58px); grid-auto-rows: 58px; min-width: 1146px; }
+      .sym { font-size: 18px; }
+      .ename, .mass { display: none; }
+    }
+  </style>
+</head>
+<body data-theme="space">
+  <header>
+    <div class="app-shell nav">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Hóa Học 118</span>
+      </div>
+      <nav aria-label="Điều hướng chính">
+        <a href="#home">Trang chủ</a>
+        <a href="#history">Lịch sử</a>
+        <a href="#table">Bảng tuần hoàn</a>
+        <a href="#detail">Nguyên tố</a>
+        <a href="#atom3d">Cấu tạo</a>
+        <a href="#trends">Quy luật</a>
+        <a href="#compare">So sánh</a>
+        <a href="#ai">AI Hóa học</a>
+        <a href="#quiz">Quiz</a>
+        <a href="#games">Trò chơi</a>
+        <a href="#lab">Thí nghiệm</a>
+        <a href="#forum">Diễn đàn</a>
+      </nav>
+      <select class="theme-select" id="themeSelect" aria-label="Chọn giao diện">
+        <option value="space">Space</option>
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="glass">Glass</option>
+      </select>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section class="hero" id="home">
+      <div>
+        <span class="badge">Web học hóa học tương tác</span>
+        <h1>Bảng tuần hoàn hóa học phiên bản siêu chi tiết</h1>
+        <p class="lead">Khám phá 118 nguyên tố, mô hình nguyên tử chuyển động, bộ lọc theo nhóm - chu kỳ, chi tiết từng nguyên tố, quiz, phòng thí nghiệm ảo, thư viện phản ứng và khu AI hỗ trợ học tập.</p>
+        <div class="search-box">
+          <input id="globalSearch" placeholder="Tìm Hydrogen, H, số 1, khí hiếm, halogen..." autocomplete="off">
+          <button class="btn primary" id="searchBtn">Tìm kiếm</button>
+        </div>
+        <div class="hero-actions">
+          <a class="btn primary" href="#table">Bắt đầu</a>
+          <a class="btn" href="#detail">Khám phá nguyên tố</a>
+          <a class="btn" href="#ai">Mở AI Hóa học</a>
+        </div>
+      </div>
+      <div class="atom-stage" aria-label="Hiệu ứng nguyên tử 3D">
+        <div class="atom">
+          <div class="nucleus"></div>
+          <div class="orbit"><span class="electron"></span></div>
+          <div class="orbit"><span class="electron"></span></div>
+          <div class="orbit"><span class="electron"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="history">
+      <div class="section-title">
+        <div>
+          <h2>Lịch sử bảng tuần hoàn</h2>
+          <p class="muted">Từ thuyết nguyên tử của Dalton đến chuẩn danh pháp hiện đại của IUPAC.</p>
+        </div>
+      </div>
+      <div class="timeline" id="timeline"></div>
+    </section>
+
+    <section id="table">
+      <div class="section-title">
+        <div>
+          <h2>Bảng tuần hoàn tương tác</h2>
+          <p class="muted">Hover để phóng to, click để mở chi tiết. Có đủ 118 nguyên tố với màu theo loại.</p>
+        </div>
+      </div>
+      <div class="panel pad">
+        <div class="filter-row">
+          <select id="categoryFilter" aria-label="Lọc theo loại">
+            <option value="all">Tất cả loại</option>
+            <option value="alkali">Kim loại kiềm</option>
+            <option value="alkaline">Kim loại kiềm thổ</option>
+            <option value="transition">Kim loại chuyển tiếp</option>
+            <option value="post-transition">Kim loại sau chuyển tiếp</option>
+            <option value="metalloid">Á kim</option>
+            <option value="nonmetal">Phi kim</option>
+            <option value="halogen">Halogen</option>
+            <option value="noble">Khí hiếm</option>
+            <option value="lanthanide">Lantan</option>
+            <option value="actinide">Actini</option>
+          </select>
+          <select id="periodFilter" aria-label="Lọc theo chu kỳ">
+            <option value="all">Tất cả chu kỳ</option>
+          </select>
+          <select id="groupFilter" aria-label="Lọc theo nhóm">
+            <option value="all">Tất cả nhóm</option>
+          </select>
+          <button class="btn" id="resetFilters">Đặt lại</button>
+        </div>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="periodic-wrap panel" style="margin-top:14px">
+        <div class="periodic" id="periodicTable"></div>
+      </div>
+    </section>
+
+    <section id="detail">
+      <div class="section-title">
+        <div>
+          <h2>Trang chi tiết nguyên tố</h2>
+          <p class="muted">Mẫu đang hiển thị theo nguyên tố được chọn trên bảng.</p>
+        </div>
+      </div>
+      <div class="detail-layout">
+        <div class="panel pad">
+          <div class="big-symbol" id="bigSymbol"></div>
+          <div class="tool-row" style="margin-top:12px">
+            <button class="btn" id="prevElement">Trước</button>
+            <button class="btn primary" id="nextElement">Tiếp</button>
+          </div>
+        </div>
+        <div class="panel pad">
+          <h3 id="detailName"></h3>
+          <p class="muted" id="detailIntro"></p>
+          <div class="facts" id="facts"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="atom3d">
+      <div class="grid">
+        <div class="span-5 panel pad">
+          <h2>Mô hình nguyên tử 3D</h2>
+          <p class="muted">Electron chuyển động quanh hạt nhân, có proton, neutron và electron. Trong bản đầy đủ có thể thay CSS animation bằng Three.js để xoay và zoom thật.</p>
+          <div class="profile-row">
+            <span class="badge">Proton</span>
+            <span class="badge">Neutron</span>
+            <span class="badge">Electron</span>
+          </div>
+        </div>
+        <div class="span-7 panel mini-atom">
+          <div class="particle p">p+</div>
+          <div class="particle n">n</div>
+          <div class="particle e">e-</div>
+          <div class="particle e two">e-</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="electron">
+      <div class="grid">
+        <div class="span-4 panel pad">
+          <h2>Cấu hình electron</h2>
+          <p class="muted">Ví dụ cấu hình có animation theo lớp orbital.</p>
+          <h3 id="electronConfig">1s1</h3>
+        </div>
+        <div class="span-8 panel pad">
+          <div class="bars">
+            <div class="bar"><label><span>1s</span><span>100%</span></label><div class="track"><div class="fill" style="--w:100%"></div></div></div>
+            <div class="bar"><label><span>2s</span><span>72%</span></label><div class="track"><div class="fill" style="--w:72%"></div></div></div>
+            <div class="bar"><label><span>2p</span><span>56%</span></label><div class="track"><div class="fill" style="--w:56%"></div></div></div>
+            <div class="bar"><label><span>3s</span><span>38%</span></label><div class="track"><div class="fill" style="--w:38%"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="trends">
+      <div class="section-title">
+        <div>
+          <h2>Quy luật bảng tuần hoàn</h2>
+          <p class="muted">Biểu đồ minh họa xu hướng bán kính, độ âm điện, ion hóa, ái lực electron và tính kim loại.</p>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="span-4 panel pad"><h3>Bán kính nguyên tử</h3><div class="bar"><label><span>Tăng xuống dưới</span><span>84%</span></label><div class="track"><div class="fill" style="--w:84%"></div></div></div></div>
+        <div class="span-4 panel pad"><h3>Độ âm điện</h3><div class="bar"><label><span>Tăng sang phải</span><span>91%</span></label><div class="track"><div class="fill" style="--w:91%"></div></div></div></div>
+        <div class="span-4 panel pad"><h3>Năng lượng ion hóa</h3><div class="bar"><label><span>Tăng lên trên</span><span>77%</span></label><div class="track"><div class="fill" style="--w:77%"></div></div></div></div>
+      </div>
+    </section>
+
+    <section id="compare">
+      <div class="section-title">
+        <div>
+          <h2>So sánh nguyên tố</h2>
+          <p class="muted">Chọn hai nguyên tố để so sánh nhanh khối lượng, nhóm, chu kỳ, cấu hình và tính chất.</p>
+        </div>
+      </div>
+      <div class="panel pad">
+        <div class="compare-grid">
+          <select id="compareA"></select>
+          <span class="badge">vs</span>
+          <select id="compareB"></select>
+          <button class="btn primary" id="compareBtn">So sánh</button>
+        </div>
+        <div class="facts" id="compareResult" style="margin-top:14px"></div>
+      </div>
+    </section>
+
+    <section id="ai">
+      <div class="grid">
+        <div class="span-5 panel pad">
+          <h2>AI Hóa học</h2>
+          <p class="muted">Giao diện chat mô phỏng cho giải bài tập, nhận diện công thức, viết và cân bằng phương trình.</p>
+          <div class="tool-row">
+            <span class="badge">Giải thích</span>
+            <span class="badge">Cân bằng PTHH</span>
+            <span class="badge">Nhận diện công thức</span>
+          </div>
+        </div>
+        <div class="span-7 panel pad">
+          <div class="fact"><small>Bạn</small>Cân bằng: Na + H2O → NaOH + H2</div>
+          <div class="fact" style="margin-top:10px"><small>AI Hóa học</small>2Na + 2H2O → 2NaOH + H2. Natri đẩy hydro khỏi nước, tạo dung dịch kiềm và khí hydro.</div>
+          <div class="search-box" style="margin-bottom:0">
+            <input placeholder="Nhập bài tập hóa học...">
+            <button class="btn primary">Gửi</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="quiz">
+      <div class="grid">
+        <div class="span-6 panel pad">
+          <h2>Quiz 1000+ câu</h2>
+          <p class="muted">Chia mức dễ, trung bình, khó; có điểm, XP, thành tích và huy hiệu.</p>
+          <h3 id="quizQuestion">Nguyên tố nào có ký hiệu H?</h3>
+          <button class="btn quiz-option" data-answer="true">Hydrogen <span>+10 XP</span></button>
+          <button class="btn quiz-option">Helium</button>
+          <button class="btn quiz-option">Hafnium</button>
+          <p class="muted" id="quizStatus" style="margin-top:12px"></p>
+        </div>
+        <div class="span-6 panel pad">
+          <h2>Xếp hạng</h2>
+          <div class="facts">
+            <div class="fact"><small>Điểm</small><b id="score">0</b></div>
+            <div class="fact"><small>XP</small><b id="xp">120</b></div>
+            <div class="fact"><small>Level</small><b>12</b></div>
+            <div class="fact"><small>Huy hiệu</small><b>Nhà hóa học trẻ</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="games">
+      <div class="section-title">
+        <div>
+          <h2>Trò chơi hóa học</h2>
+          <p class="muted">Ghép nguyên tố, đoán ký hiệu, memory card, vòng quay may mắn và puzzle.</p>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="span-4 panel pad"><h3>Memory Card</h3><div class="game-board" id="gameBoard"></div></div>
+        <div class="span-4 panel pad"><h3>Wheel Lucky</h3><div class="reaction">H • O • Na • Cl</div><button class="btn primary" id="spinBtn">Quay</button></div>
+        <div class="span-4 panel pad"><h3>Puzzle</h3><p class="muted">Sắp xếp nguyên tố theo số hiệu nguyên tử, nhóm hoặc chu kỳ.</p><button class="btn">Chơi ngay</button></div>
+      </div>
+    </section>
+
+    <section id="reactions">
+      <div class="grid">
+        <div class="span-7 panel pad">
+          <h2>Thư viện phản ứng</h2>
+          <div class="reaction">2Na + 2H2O → 2NaOH + H2↑</div>
+          <p class="muted">Phản ứng natri với nước tạo natri hydroxide và khí hydro, kèm animation hoặc video trong bản triển khai đầy đủ.</p>
+        </div>
+        <div class="span-5 panel pad">
+          <h2>Video học tập</h2>
+          <div class="facts">
+            <div class="fact"><small>Nguồn</small>YouTube</div>
+            <div class="fact"><small>Định dạng</small>GIF, mô phỏng, 3D</div>
+            <div class="fact"><small>Chủ đề</small>Axit, bazơ, muối, oxi hóa khử</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="lab">
+      <div class="section-title">
+        <div>
+          <h2>Phòng thí nghiệm ảo</h2>
+          <p class="muted">Mô phỏng axit, bazơ, muối và phản ứng oxi hóa khử.</p>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="span-3 panel pad"><h3>Axit</h3><p class="muted">pH thấp, quỳ tím hóa đỏ.</p></div>
+        <div class="span-3 panel pad"><h3>Bazơ</h3><p class="muted">pH cao, quỳ tím hóa xanh.</p></div>
+        <div class="span-3 panel pad"><h3>Muối</h3><p class="muted">Sản phẩm trung hòa hoặc trao đổi ion.</p></div>
+        <div class="span-3 panel pad"><h3>Oxi hóa khử</h3><p class="muted">Trao đổi electron giữa chất khử và chất oxi hóa.</p></div>
+      </div>
+    </section>
+
+    <section id="scientists">
+      <div class="section-title">
+        <div>
+          <h2>Nhà khoa học</h2>
+          <p class="muted">Mendeleev, Moseley, Dalton, Bohr, Rutherford, Thomson, Curie, Einstein.</p>
+        </div>
+      </div>
+      <div class="facts" id="scientistsList"></div>
+    </section>
+
+    <section id="forum">
+      <div class="grid">
+        <div class="span-4 panel pad">
+          <h2>Hồ sơ người dùng</h2>
+          <div class="profile-row">
+            <span class="badge">Avatar</span>
+            <span class="badge">XP 1280</span>
+            <span class="badge">Level 12</span>
+            <span class="badge">5 huy hiệu</span>
+          </div>
+        </div>
+        <div class="span-4 panel pad">
+          <h2>Diễn đàn</h2>
+          <div class="fact"><small>Bài đăng</small>Vì sao khí hiếm khó phản ứng?</div>
+          <div class="tool-row" style="margin-top:10px"><button class="btn">Like</button><button class="btn">Bình luận</button><button class="btn">Trả lời</button></div>
+        </div>
+        <div class="span-4 panel pad">
+          <h2>Tin tức hóa học</h2>
+          <p class="muted">Khu vực dành cho API News, tìm kiếm và danh mục tin tức.</p>
+          <input style="width:100%" placeholder="Tìm tin tức hóa học...">
+        </div>
+      </div>
+    </section>
+
+    <section id="admin">
+      <div class="grid">
+        <div class="span-6 panel pad">
+          <h2>Dashboard quản trị</h2>
+          <div class="facts">
+            <div class="fact"><small>Người dùng</small>2.418</div>
+            <div class="fact"><small>Quiz</small>1.024</div>
+            <div class="fact"><small>Bài viết</small>318</div>
+            <div class="fact"><small>Nguyên tố</small>118</div>
+            <div class="fact"><small>Bình luận</small>8.920</div>
+            <div class="fact"><small>Video</small>210</div>
+          </div>
+        </div>
+        <div class="span-6 panel pad">
+          <h2>API & Công nghệ</h2>
+          <div class="tool-row">
+            <span class="badge">AI API</span><span class="badge">News API</span><span class="badge">Firebase</span><span class="badge">MongoDB</span><span class="badge">Node.js</span><span class="badge">Express</span><span class="badge">Chart.js</span><span class="badge">Three.js</span><span class="badge">GSAP</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-shell" id="contact" style="padding:44px 0 60px">
+    <div class="footer-grid">
+      <div>
+        <h2>Hóa Học 118</h2>
+        <p class="muted">Website học bảng tuần hoàn hóa học với mô phỏng, quiz, AI, diễn đàn, dashboard và thiết kế responsive cho desktop, tablet, mobile.</p>
+      </div>
+      <div><h3>Website</h3><p class="muted">Giới thiệu<br>Chính sách<br>Điều khoản</p></div>
+      <div><h3>Cộng đồng</h3><p class="muted">GitHub<br>Facebook<br>Diễn đàn</p></div>
+      <div><h3>Liên hệ</h3><p class="muted">Email<br>Biểu mẫu<br>Hỗ trợ</p></div>
+    </div>
+  </footer>
+
+  <div class="modal" id="elementModal" role="dialog" aria-modal="true" aria-label="Chi tiết nguyên tố">
+    <div class="modal-card">
+      <div class="modal-head">
+        <strong id="modalTitle">Nguyên tố</strong>
+        <button class="btn close" id="closeModal">×</button>
+      </div>
+      <div class="pad" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    const categories = {
+      alkali: "Kim loại kiềm",
+      alkaline: "Kim loại kiềm thổ",
+      transition: "Kim loại chuyển tiếp",
+      "post-transition": "Kim loại sau chuyển tiếp",
+      metalloid: "Á kim",
+      nonmetal: "Phi kim",
+      halogen: "Halogen",
+      noble: "Khí hiếm",
+      lanthanide: "Lantan",
+      actinide: "Actini",
+      unknown: "Chưa phân loại"
+    };
+
+    const raw = [
+      [1,"H","Hydrogen",1,1,"nonmetal",1.008,"1s1"],[2,"He","Helium",1,18,"noble",4.0026,"1s2"],
+      [3,"Li","Lithium",2,1,"alkali",6.94,"[He] 2s1"],[4,"Be","Beryllium",2,2,"alkaline",9.0122,"[He] 2s2"],
+      [5,"B","Boron",2,13,"metalloid",10.81,"[He] 2s2 2p1"],[6,"C","Carbon",2,14,"nonmetal",12.011,"[He] 2s2 2p2"],
+      [7,"N","Nitrogen",2,15,"nonmetal",14.007,"[He] 2s2 2p3"],[8,"O","Oxygen",2,16,"nonmetal",15.999,"[He] 2s2 2p4"],
+      [9,"F","Fluorine",2,17,"halogen",18.998,"[He] 2s2 2p5"],[10,"Ne","Neon",2,18,"noble",20.180,"[He] 2s2 2p6"],
+      [11,"Na","Sodium",3,1,"alkali",22.990,"[Ne] 3s1"],[12,"Mg","Magnesium",3,2,"alkaline",24.305,"[Ne] 3s2"],
+      [13,"Al","Aluminium",3,13,"post-transition",26.982,"[Ne] 3s2 3p1"],[14,"Si","Silicon",3,14,"metalloid",28.085,"[Ne] 3s2 3p2"],
+      [15,"P","Phosphorus",3,15,"nonmetal",30.974,"[Ne] 3s2 3p3"],[16,"S","Sulfur",3,16,"nonmetal",32.06,"[Ne] 3s2 3p4"],
+      [17,"Cl","Chlorine",3,17,"halogen",35.45,"[Ne] 3s2 3p5"],[18,"Ar","Argon",3,18,"noble",39.948,"[Ne] 3s2 3p6"],
+      [19,"K","Potassium",4,1,"alkali",39.098,"[Ar] 4s1"],[20,"Ca","Calcium",4,2,"alkaline",40.078,"[Ar] 4s2"],
+      [21,"Sc","Scandium",4,3,"transition",44.956,"[Ar] 3d1 4s2"],[22,"Ti","Titanium",4,4,"transition",47.867,"[Ar] 3d2 4s2"],
+      [23,"V","Vanadium",4,5,"transition",50.942,"[Ar] 3d3 4s2"],[24,"Cr","Chromium",4,6,"transition",51.996,"[Ar] 3d5 4s1"],
+      [25,"Mn","Manganese",4,7,"transition",54.938,"[Ar] 3d5 4s2"],[26,"Fe","Iron",4,8,"transition",55.845,"[Ar] 3d6 4s2"],
+      [27,"Co","Cobalt",4,9,"transition",58.933,"[Ar] 3d7 4s2"],[28,"Ni","Nickel",4,10,"transition",58.693,"[Ar] 3d8 4s2"],
+      [29,"Cu","Copper",4,11,"transition",63.546,"[Ar] 3d10 4s1"],[30,"Zn","Zinc",4,12,"transition",65.38,"[Ar] 3d10 4s2"],
+      [31,"Ga","Gallium",4,13,"post-transition",69.723,"[Ar] 3d10 4s2 4p1"],[32,"Ge","Germanium",4,14,"metalloid",72.630,"[Ar] 3d10 4s2 4p2"],
+      [33,"As","Arsenic",4,15,"metalloid",74.922,"[Ar] 3d10 4s2 4p3"],[34,"Se","Selenium",4,16,"nonmetal",78.971,"[Ar] 3d10 4s2 4p4"],
+      [35,"Br","Bromine",4,17,"halogen",79.904,"[Ar] 3d10 4s2 4p5"],[36,"Kr","Krypton",4,18,"noble",83.798,"[Ar] 3d10 4s2 4p6"],
+      [37,"Rb","Rubidium",5,1,"alkali",85.468,"[Kr] 5s1"],[38,"Sr","Strontium",5,2,"alkaline",87.62,"[Kr] 5s2"],
+      [39,"Y","Yttrium",5,3,"transition",88.906,"[Kr] 4d1 5s2"],[40,"Zr","Zirconium",5,4,"transition",91.224,"[Kr] 4d2 5s2"],
+      [41,"Nb","Niobium",5,5,"transition",92.906,"[Kr] 4d4 5s1"],[42,"Mo","Molybdenum",5,6,"transition",95.95,"[Kr] 4d5 5s1"],
+      [43,"Tc","Technetium",5,7,"transition",98,"[Kr] 4d5 5s2"],[44,"Ru","Ruthenium",5,8,"transition",101.07,"[Kr] 4d7 5s1"],
+      [45,"Rh","Rhodium",5,9,"transition",102.91,"[Kr] 4d8 5s1"],[46,"Pd","Palladium",5,10,"transition",106.42,"[Kr] 4d10"],
+      [47,"Ag","Silver",5,11,"transition",107.87,"[Kr] 4d10 5s1"],[48,"Cd","Cadmium",5,12,"transition",112.41,"[Kr] 4d10 5s2"],
+      [49,"In","Indium",5,13,"post-transition",114.82,"[Kr] 4d10 5s2 5p1"],[50,"Sn","Tin",5,14,"post-transition",118.71,"[Kr] 4d10 5s2 5p2"],
+      [51,"Sb","Antimony",5,15,"metalloid",121.76,"[Kr] 4d10 5s2 5p3"],[52,"Te","Tellurium",5,16,"metalloid",127.60,"[Kr] 4d10 5s2 5p4"],
+      [53,"I","Iodine",5,17,"halogen",126.90,"[Kr] 4d10 5s2 5p5"],[54,"Xe","Xenon",5,18,"noble",131.29,"[Kr] 4d10 5s2 5p6"],
+      [55,"Cs","Caesium",6,1,"alkali",132.91,"[Xe] 6s1"],[56,"Ba","Barium",6,2,"alkaline",137.33,"[Xe] 6s2"],
+      [57,"La","Lanthanum",8,3,"lanthanide",138.91,"[Xe] 5d1 6s2"],[58,"Ce","Cerium",8,4,"lanthanide",140.12,"[Xe] 4f1 5d1 6s2"],
+      [59,"Pr","Praseodymium",8,5,"lanthanide",140.91,"[Xe] 4f3 6s2"],[60,"Nd","Neodymium",8,6,"lanthanide",144.24,"[Xe] 4f4 6s2"],
+      [61,"Pm","Promethium",8,7,"lanthanide",145,"[Xe] 4f5 6s2"],[62,"Sm","Samarium",8,8,"lanthanide",150.36,"[Xe] 4f6 6s2"],
+      [63,"Eu","Europium",8,9,"lanthanide",151.96,"[Xe] 4f7 6s2"],[64,"Gd","Gadolinium",8,10,"lanthanide",157.25,"[Xe] 4f7 5d1 6s2"],
+      [65,"Tb","Terbium",8,11,"lanthanide",158.93,"[Xe] 4f9 6s2"],[66,"Dy","Dysprosium",8,12,"lanthanide",162.50,"[Xe] 4f10 6s2"],
+      [67,"Ho","Holmium",8,13,"lanthanide",164.93,"[Xe] 4f11 6s2"],[68,"Er","Erbium",8,14,"lanthanide",167.26,"[Xe] 4f12 6s2"],
+      [69,"Tm","Thulium",8,15,"lanthanide",168.93,"[Xe] 4f13 6s2"],[70,"Yb","Ytterbium",8,16,"lanthanide",173.05,"[Xe] 4f14 6s2"],
+      [71,"Lu","Lutetium",8,17,"lanthanide",174.97,"[Xe] 4f14 5d1 6s2"],
+      [72,"Hf","Hafnium",6,4,"transition",178.49,"[Xe] 4f14 5d2 6s2"],[73,"Ta","Tantalum",6,5,"transition",180.95,"[Xe] 4f14 5d3 6s2"],
+      [74,"W","Tungsten",6,6,"transition",183.84,"[Xe] 4f14 5d4 6s2"],[75,"Re","Rhenium",6,7,"transition",186.21,"[Xe] 4f14 5d5 6s2"],
+      [76,"Os","Osmium",6,8,"transition",190.23,"[Xe] 4f14 5d6 6s2"],[77,"Ir","Iridium",6,9,"transition",192.22,"[Xe] 4f14 5d7 6s2"],
+      [78,"Pt","Platinum",6,10,"transition",195.08,"[Xe] 4f14 5d9 6s1"],[79,"Au","Gold",6,11,"transition",196.97,"[Xe] 4f14 5d10 6s1"],
+      [80,"Hg","Mercury",6,12,"transition",200.59,"[Xe] 4f14 5d10 6s2"],[81,"Tl","Thallium",6,13,"post-transition",204.38,"[Xe] 4f14 5d10 6s2 6p1"],
+      [82,"Pb","Lead",6,14,"post-transition",207.2,"[Xe] 4f14 5d10 6s2 6p2"],[83,"Bi","Bismuth",6,15,"post-transition",208.98,"[Xe] 4f14 5d10 6s2 6p3"],
+      [84,"Po","Polonium",6,16,"metalloid",209,"[Xe] 4f14 5d10 6s2 6p4"],[85,"At","Astatine",6,17,"halogen",210,"[Xe] 4f14 5d10 6s2 6p5"],
+      [86,"Rn","Radon",6,18,"noble",222,"[Xe] 4f14 5d10 6s2 6p6"],
+      [87,"Fr","Francium",7,1,"alkali",223,"[Rn] 7s1"],[88,"Ra","Radium",7,2,"alkaline",226,"[Rn] 7s2"],
+      [89,"Ac","Actinium",9,3,"actinide",227,"[Rn] 6d1 7s2"],[90,"Th","Thorium",9,4,"actinide",232.04,"[Rn] 6d2 7s2"],
+      [91,"Pa","Protactinium",9,5,"actinide",231.04,"[Rn] 5f2 6d1 7s2"],[92,"U","Uranium",9,6,"actinide",238.03,"[Rn] 5f3 6d1 7s2"],
+      [93,"Np","Neptunium",9,7,"actinide",237,"[Rn] 5f4 6d1 7s2"],[94,"Pu","Plutonium",9,8,"actinide",244,"[Rn] 5f6 7s2"],
+      [95,"Am","Americium",9,9,"actinide",243,"[Rn] 5f7 7s2"],[96,"Cm","Curium",9,10,"actinide",247,"[Rn] 5f7 6d1 7s2"],
+      [97,"Bk","Berkelium",9,11,"actinide",247,"[Rn] 5f9 7s2"],[98,"Cf","Californium",9,12,"actinide",251,"[Rn] 5f10 7s2"],
+      [99,"Es","Einsteinium",9,13,"actinide",252,"[Rn] 5f11 7s2"],[100,"Fm","Fermium",9,14,"actinide",257,"[Rn] 5f12 7s2"],
+      [101,"Md","Mendelevium",9,15,"actinide",258,"[Rn] 5f13 7s2"],[102,"No","Nobelium",9,16,"actinide",259,"[Rn] 5f14 7s2"],
+      [103,"Lr","Lawrencium",9,17,"actinide",266,"[Rn] 5f14 7s2 7p1"],
+      [104,"Rf","Rutherfordium",7,4,"transition",267,"[Rn] 5f14 6d2 7s2"],[105,"Db","Dubnium",7,5,"transition",268,"[Rn] 5f14 6d3 7s2"],
+      [106,"Sg","Seaborgium",7,6,"transition",269,"[Rn] 5f14 6d4 7s2"],[107,"Bh","Bohrium",7,7,"transition",270,"[Rn] 5f14 6d5 7s2"],
+      [108,"Hs","Hassium",7,8,"transition",277,"[Rn] 5f14 6d6 7s2"],[109,"Mt","Meitnerium",7,9,"unknown",278,"[Rn] 5f14 6d7 7s2"],
+      [110,"Ds","Darmstadtium",7,10,"unknown",281,"[Rn] 5f14 6d8 7s2"],[111,"Rg","Roentgenium",7,11,"unknown",282,"[Rn] 5f14 6d9 7s2"],
+      [112,"Cn","Copernicium",7,12,"transition",285,"[Rn] 5f14 6d10 7s2"],[113,"Nh","Nihonium",7,13,"unknown",286,"[Rn] 5f14 6d10 7s2 7p1"],
+      [114,"Fl","Flerovium",7,14,"unknown",289,"[Rn] 5f14 6d10 7s2 7p2"],[115,"Mc","Moscovium",7,15,"unknown",290,"[Rn] 5f14 6d10 7s2 7p3"],
+      [116,"Lv","Livermorium",7,16,"unknown",293,"[Rn] 5f14 6d10 7s2 7p4"],[117,"Ts","Tennessine",7,17,"halogen",294,"[Rn] 5f14 6d10 7s2 7p5"],
+      [118,"Og","Oganesson",7,18,"noble",294,"[Rn] 5f14 6d10 7s2 7p6"]
+    ];
+
+    const elements = raw.map(([number, symbol, name, period, group, category, mass, config]) => ({
+      number, symbol, name, period, group, category, mass, config,
+      protons: number,
+      electrons: number,
+      neutrons: Math.max(0, Math.round(mass) - number),
+      state: number === 1 || ["N","O","F","Cl"].includes(symbol) || category === "noble" ? "Khí" : ["Br","Hg"].includes(symbol) ? "Lỏng" : "Rắn",
+      electronegativity: category === "noble" ? "Không xác định" : (0.7 + (group / 18) * 3.2).toFixed(2),
+      melt: category === "noble" ? "Rất thấp" : "Thay đổi theo nguyên tố",
+      boil: category === "noble" ? "Rất thấp" : "Thay đổi theo nguyên tố",
+      density: "Dữ liệu mở rộng",
+      uses: "Học tập, công nghiệp, vật liệu, y sinh hoặc nghiên cứu tùy từng nguyên tố.",
+      history: "Thông tin lịch sử phát hiện có thể nối với cơ sở dữ liệu chi tiết trong bản backend.",
+      toxicity: category === "actinide" ? "Phóng xạ, cần kiểm soát nghiêm ngặt" : "Phụ thuộc dạng chất và nồng độ",
+      bio: ["C","H","O","N","P","S","Na","K","Ca","Mg","Fe","Cl"].includes(symbol) ? "Có vai trò sinh học quan trọng" : "Vai trò sinh học hạn chế hoặc chưa rõ"
+    }));
+
+    const timelineData = [
+      ["1803","Dalton","Đề xuất thuyết nguyên tử hiện đại, xem nguyên tử là hạt cơ bản của chất."],
+      ["1817","Döbereiner","Phát hiện bộ ba nguyên tố có tính chất gần nhau."],
+      ["1862","Chancourtois","Sắp xếp nguyên tố theo hình xoắn ốc telluric."],
+      ["1864","Newlands","Đưa ra quy luật bát âm khi xếp theo khối lượng nguyên tử."],
+      ["1869","Mendeleev","Công bố bảng tuần hoàn và dự đoán nguyên tố chưa phát hiện."],
+      ["1913","Moseley","Dùng số hiệu nguyên tử làm trật tự nền tảng."],
+      ["1945","Seaborg","Đề xuất dãy actini, định hình bảng hiện đại."],
+      ["Hiện đại","IUPAC","Chuẩn hóa tên gọi, ký hiệu và công nhận nguyên tố mới."]
+    ];
+
+    const table = document.getElementById("periodicTable");
+    const selected = { current: elements[0] };
+
+    function renderTimeline() {
+      document.getElementById("timeline").innerHTML = timelineData.map(item => `
+        <article class="panel pad time-card"><strong>${item[0]}</strong><h3>${item[1]}</h3><p class="muted">${item[2]}</p></article>
+      `).join("");
+    }
+
+    function renderLegend() {
+      document.getElementById("legend").innerHTML = Object.entries(categories).map(([key, label]) => `
+        <span class="legend-item"><span class="swatch ${key}"></span>${label}</span>
+      `).join("");
+    }
+
+    function renderFilters() {
+      const periodFilter = document.getElementById("periodFilter");
+      const groupFilter = document.getElementById("groupFilter");
+      for (let i = 1; i <= 9; i++) periodFilter.insertAdjacentHTML("beforeend", `<option value="${i}">${i <= 7 ? "Chu kỳ " + i : i === 8 ? "Dãy Lantan" : "Dãy Actini"}</option>`);
+      for (let i = 1; i <= 18; i++) groupFilter.insertAdjacentHTML("beforeend", `<option value="${i}">Nhóm ${i}</option>`);
+    }
+
+    function renderTable() {
+      table.innerHTML = "";
+      elements.forEach(el => {
+        const cell = document.createElement("button");
+        cell.className = `element ${el.category}`;
+        cell.style.gridColumn = el.group;
+        cell.style.gridRow = el.period;
+        cell.title = `${el.name} (${el.symbol}) - ${categories[el.category]}`;
+        cell.dataset.category = el.category;
+        cell.dataset.period = el.period;
+        cell.dataset.group = el.group;
+        cell.dataset.search = `${el.name} ${el.symbol} ${el.number} ${categories[el.category]}`.toLowerCase();
+        cell.innerHTML = `<div class="num">${el.number}</div><div class="sym">${el.symbol}</div><div class="ename">${el.name}</div><div class="mass">${el.mass}</div>`;
+        cell.addEventListener("click", () => {
+          selected.current = el;
+          renderDetail(el);
+          openModal(el);
+          document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+        table.appendChild(cell);
+      });
+    }
+
+    function applyFilters() {
+      const cat = document.getElementById("categoryFilter").value;
+      const period = document.getElementById("periodFilter").value;
+      const group = document.getElementById("groupFilter").value;
+      const term = document.getElementById("globalSearch").value.trim().toLowerCase();
+      document.querySelectorAll(".element").forEach(cell => {
+        const passCat = cat === "all" || cell.dataset.category === cat;
+        const passPeriod = period === "all" || cell.dataset.period === period;
+        const passGroup = group === "all" || cell.dataset.group === group;
+        const passTerm = !term || cell.dataset.search.includes(term);
+        cell.classList.toggle("dim", !(passCat && passPeriod && passGroup && passTerm));
+      });
+    }
+
+    function renderDetail(el) {
+      document.getElementById("bigSymbol").innerHTML = `<div><b>${el.symbol}</b><span>${el.name}</span><br><small>Số hiệu ${el.number}</small></div>`;
+      document.getElementById("detailName").textContent = `${el.name} (${el.symbol})`;
+      document.getElementById("detailIntro").textContent = `${el.name} thuộc nhóm ${el.group}, chu kỳ ${el.period <= 7 ? el.period : el.period === 8 ? "Lantan" : "Actini"}, loại ${categories[el.category]}.`;
+      document.getElementById("electronConfig").textContent = el.config;
+      const data = [
+        ["Tên", el.name],["Ký hiệu", el.symbol],["Số hiệu nguyên tử", el.number],["Khối lượng", el.mass],
+        ["Proton", el.protons],["Neutron", el.neutrons],["Electron", el.electrons],["Cấu hình electron", el.config],
+        ["Độ âm điện", el.electronegativity],["Nhiệt độ nóng chảy", el.melt],["Nhiệt độ sôi", el.boil],["Trạng thái", el.state],
+        ["Độ dẫn điện", "Theo pha và cấu trúc"],["Độ dẫn nhiệt", "Theo vật liệu"],["Ứng dụng", el.uses],["Độc tính", el.toxicity],
+        ["Vai trò sinh học", el.bio],["Lịch sử phát hiện", el.history]
+      ];
+      document.getElementById("facts").innerHTML = data.map(([k,v]) => `<div class="fact"><small>${k}</small>${v}</div>`).join("");
+    }
+
+    function openModal(el) {
+      document.getElementById("modalTitle").textContent = `${el.name} - ${el.symbol}`;
+      document.getElementById("modalBody").innerHTML = `
+        <div class="detail-layout">
+          <div class="big-symbol"><div><b>${el.symbol}</b><span>${el.name}</span><br><small>${categories[el.category]}</small></div></div>
+          <div>
+            <h2>${el.name}</h2>
+            <p class="muted">Chi tiết gồm tên, ký hiệu, số hiệu, khối lượng, electron, neutron, proton, cấu hình electron, độ âm điện, nhiệt độ, màu sắc, khối lượng riêng, trạng thái, ứng dụng, lịch sử, mô hình 3D, video, quiz, phản ứng, điều chế, độc tính và vai trò sinh học.</p>
+            <div class="facts">
+              <div class="fact"><small>Số hiệu</small>${el.number}</div>
+              <div class="fact"><small>Khối lượng</small>${el.mass}</div>
+              <div class="fact"><small>Nhóm</small>${el.group}</div>
+              <div class="fact"><small>Chu kỳ</small>${el.period}</div>
+              <div class="fact"><small>Cấu hình</small>${el.config}</div>
+              <div class="fact"><small>Ứng dụng</small>${el.uses}</div>
+            </div>
+          </div>
+        </div>`;
+      document.getElementById("elementModal").classList.add("open");
+    }
+
+    function populateCompare() {
+      const options = elements.map(el => `<option value="${el.number}">${el.symbol} - ${el.name}</option>`).join("");
+      document.getElementById("compareA").innerHTML = options;
+      document.getElementById("compareB").innerHTML = options;
+      document.getElementById("compareB").value = 19;
+    }
+
+    function compare() {
+      const a = elements.find(el => el.number == document.getElementById("compareA").value);
+      const b = elements.find(el => el.number == document.getElementById("compareB").value);
+      const rows = [
+        ["Nguyên tố", `${a.symbol} - ${a.name}`, `${b.symbol} - ${b.name}`],
+        ["Khối lượng", a.mass, b.mass],
+        ["Cấu hình", a.config, b.config],
+        ["Bán kính", `Ước tính theo chu kỳ ${a.period}`, `Ước tính theo chu kỳ ${b.period}`],
+        ["Nhiệt độ sôi", a.boil, b.boil],
+        ["Độ âm điện", a.electronegativity, b.electronegativity]
+      ];
+      document.getElementById("compareResult").innerHTML = rows.map(([k, av, bv]) => `<div class="fact"><small>${k}</small><b>${av}</b><br><span class="muted">${bv}</span></div>`).join("");
+    }
+
+    function renderScientists() {
+      const names = ["Mendeleev","Moseley","Dalton","Bohr","Rutherford","Thomson","Curie","Einstein"];
+      document.getElementById("scientistsList").innerHTML = names.map(name => `<div class="fact"><small>Nhà khoa học</small><b>${name}</b><br><span class="muted">Tiểu sử, đóng góp, hình ảnh và video học tập.</span></div>`).join("");
+    }
+
+    function renderGame() {
+      const tiles = ["H","Hydrogen","O","Oxygen","Na","Sodium","Cl","Chlorine"];
+      document.getElementById("gameBoard").innerHTML = tiles.map(t => `<button class="card-tile">${t}</button>`).join("");
+    }
+
+    document.getElementById("themeSelect").addEventListener("change", e => document.body.dataset.theme = e.target.value);
+    ["categoryFilter","periodFilter","groupFilter","globalSearch"].forEach(id => document.getElementById(id).addEventListener("input", applyFilters));
+    document.getElementById("searchBtn").addEventListener("click", applyFilters);
+    document.getElementById("resetFilters").addEventListener("click", () => {
+      document.getElementById("categoryFilter").value = "all";
+      document.getElementById("periodFilter").value = "all";
+      document.getElementById("groupFilter").value = "all";
+      document.getElementById("globalSearch").value = "";
+      applyFilters();
+    });
+    document.getElementById("closeModal").addEventListener("click", () => document.getElementById("elementModal").classList.remove("open"));
+    document.getElementById("elementModal").addEventListener("click", e => {
+      if (e.target.id === "elementModal") e.currentTarget.classList.remove("open");
+    });
+    document.getElementById("prevElement").addEventListener("click", () => {
+      const next = elements[Math.max(0, selected.current.number - 2)];
+      selected.current = next;
+      renderDetail(next);
+    });
+    document.getElementById("nextElement").addEventListener("click", () => {
+      const next = elements[Math.min(elements.length - 1, selected.current.number)];
+      selected.current = next;
+      renderDetail(next);
+    });
+    document.getElementById("compareBtn").addEventListener("click", compare);
+    document.querySelectorAll(".quiz-option").forEach(btn => btn.addEventListener("click", () => {
+      const ok = btn.dataset.answer === "true";
+      document.getElementById("quizStatus").textContent = ok ? "Chính xác! Hydrogen có ký hiệu H." : "Chưa đúng, thử lại nhé.";
+      if (ok) {
+        document.getElementById("score").textContent = Number(document.getElementById("score").textContent) + 10;
+        document.getElementById("xp").textContent = Number(document.getElementById("xp").textContent) + 10;
+      }
+    }));
+    document.getElementById("spinBtn").addEventListener("click", () => {
+      const sample = elements[Math.floor(Math.random() * elements.length)];
+      alert(`May mắn hôm nay: ${sample.name} (${sample.symbol})`);
+    });
+
+    renderTimeline();
+    renderLegend();
+    renderFilters();
+    renderTable();
+    renderDetail(elements[0]);
+    populateCompare();
+    compare();
+    renderScientists();
+    renderGame();
+  </script>
+</body>
+</html>
